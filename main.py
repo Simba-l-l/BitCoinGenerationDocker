@@ -27,7 +27,7 @@ def makeDir():
 def userInput():
     timesltime = round(((60 / timesl) * 100) * 60)
     timesltimed = timesltime * 24
-    print("{}BitGen by KKINIUSS{}".format(bg("#5F00FF"), attr("reset")))
+    print("{}BitGen by KKINULINGUS{}, Simba-l-l and Pashtet")
     print()
     print("{}Скорость генерации : ~{}/час ~{}/день{}".format(bg("#5F00FF"), timesltime, timesltimed, attr("reset")))
     print()
@@ -120,7 +120,8 @@ def check():
     while True:
         adrs = []
         i = 0
-        for _ in range(100):
+        print("{}START GENERATION{}".format(bg("#4682B4"), attr("reset")))
+        for _ in range(1):
             adrs.append(generateBd())
         adrs_s = []
         for adr in adrs:
@@ -149,8 +150,8 @@ def check():
                             print('{}BAL: {} | REC: {} | ADDR: {} | MNEM: {}{}'.format(
                                 fg("#3597EB"), balance, received, addy, mnemonic_words, attr("reset")))
                         else:
-                            with open('results/dry.txt', 'a') as w:
-                                w.write(f'ADDR: {addy} | BAL: {balance} | MNEM: {mnemonic_words}\n')
+                            # with open('results/dry.txt', 'a') as w:
+                            #     w.write(f'ADDR: {addy} | BAL: {balance} | MNEM: {mnemonic_words}\n')
                             print(
                                 '{}BAL: {} | REC: {} | ADDR: {} | MNEM: {}{}'.format(fg("#FFFFF"), balance, received,
                                                                                      addy,
@@ -160,6 +161,7 @@ def check():
                             w.write(
                                 f'ADDR: {addy} | BAL: {balance} | MNEM: {mnemonic_words}\n')
                 i += 1
+            print("{}END BLOCK{}".format(bg("#32CD32"), attr("reset")))
             time.sleep(timesl)
 
 
