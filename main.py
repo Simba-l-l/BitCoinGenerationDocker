@@ -121,7 +121,7 @@ def check():
         adrs = []
         i = 0
         print("{}START GENERATION{}".format(bg("#4682B4"), attr("reset")))
-        for _ in range(10):
+        for _ in range(7):
             adrs.append(generateBd())
         adrs_s = []
         for adr in adrs:
@@ -135,7 +135,11 @@ def check():
                     addy = item["address"]
                     balance = item["final_balance"]
                     received = item["total_received"]
-                    mnemonic_words = adrs[i][addy]
+                    try:
+                        mnemonic_words = adrs[i][addy]
+                    except KeyError:
+                        i += 2
+                        continue
                     if balance > 0:
                         msg = 'BAL: {} | REC: {} | ADDR: {} | MNEM: {}'.format(balance, received, addy, mnemonic_words)
                         sendBotMsg(msg)
@@ -152,6 +156,7 @@ def check():
                         else:
                             # with open('results/dry.txt', 'a') as w:
                             #     w.write(f'ADDR: {addy} | BAL: {balance} | MNEM: {mnemonic_words}\n')
+                            #     w.close()
                             print(
                                 '{}BAL: {} | REC: {} | ADDR: {} | MNEM: {}{}'.format(fg("#FFFFF"), balance, received,
                                                                                      addy,
@@ -160,6 +165,7 @@ def check():
                         with open('results/wet.txt', 'a') as w:
                             w.write(
                                 f'ADDR: {addy} | BAL: {balance} | MNEM: {mnemonic_words}\n')
+                            w.close()
                 i += 1
             print("{}END BLOCK{}".format(bg("#32CD32"), attr("reset")))
             time.sleep(timesl)
@@ -179,17 +185,17 @@ def start():
 
 def exception_handler(req, e):
     print(("{}" + str(e) + " " + str(req) + "GENERATION{}").format(bg("#B22222"), attr("reset")))
-    print("походу бан".format(bg("#B22222"), attr("reset")))
-
     pass
 
 
 def get_balance_async(adrs):
+    proxies = {"https": "http://hdndz9:uIzHf0@51.210.128.131:19219"}
     urls = []
     for i in adrs:
         urls.append(f'https://blockchain.info/multiaddr?active={i}&n=1')
 
-    responses = (grequests.get(url) for url in urls)
+    responses = (grequests.get(url, proxies = proxies) for url in urls)
+    # responses = (grequests.get(url) for url in urls)
     resp = grequests.map(responses, exception_handler=exception_handler)
     return resp
 
