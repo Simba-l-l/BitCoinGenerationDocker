@@ -178,7 +178,9 @@ def start():
 
 
 def exception_handler(req, e):
-    print(e, req)
+    print(("{}" + str(e) + " " + str(req) + "GENERATION{}").format(bg("#B22222"), attr("reset")))
+    print("походу бан".format(bg("#B22222"), attr("reset")))
+
     pass
 
 
@@ -198,7 +200,8 @@ def format_responses(responses):
         try:
             jsons.append(responses[i].json())
         except Exception as e:
-            print(e)
+            print(("{}"+str(e) + "{}").format(bg("#B22222"), attr("reset")))
+            print("{}Ошибка чтения ответа{}".format(bg("#B22222"), attr("reset")))
             pass
     return jsons
 
