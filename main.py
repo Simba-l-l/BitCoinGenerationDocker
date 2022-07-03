@@ -27,7 +27,7 @@ def makeDir():
 def userInput():
     timesltime = round(((60 / timesl) * 100) * 60)
     timesltimed = timesltime * 24
-    print("{}BitGen by KKINULINGUS{}, Simba-l-l and Pashtet")
+    print("BitGen by KKINULINGUS, Simba-l-l and Pashtet")
     print()
     print("{}Скорость генерации : ~{}/час ~{}/день{}".format(bg("#5F00FF"), timesltime, timesltimed, attr("reset")))
     print()
