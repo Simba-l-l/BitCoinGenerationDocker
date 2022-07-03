@@ -1,24 +1,21 @@
-from multiprocessing.pool import ThreadPool as Pool
-from colored import fg, bg, attr
-from Bip39Gen import Bip39Gen
-from decimal import Decimal
-from time import sleep
-import bip32utils
-import threading
-import requests
-import mnemonic
-import pprint
-import random
-import ctypes
-import time
 import os
-from numba import njit
-#from notifypy import Notify
+import grequests
+import random
+import threading
+import time
+import bip32utils
+import mnemonic
+import requests
+from colored import fg, bg, attr
 
-timesl = 1# задержка между запросами
+from Bip39Gen import Bip39Gen
 
-token_bot = "1526046385:AAHlG6yMCq4LK6sIUTiOFxeKRRYWER72kh0" # создать бота и получить токен тут @BotFather
-chat_id = "453442665" #узнать ваш id можно в боте @userinfobot
+# from notifypy import Notify
+
+timesl = 1  # задержка между запросами
+
+token_bot = "1526046385:AAHlG6yMCq4LK6sIUTiOFxeKRRYWER72kh0"  # создать бота и получить токен тут @BotFather
+chat_id = "453442665"  # узнать ваш id можно в боте @userinfobot
 
 
 def makeDir():
@@ -28,12 +25,11 @@ def makeDir():
 
 
 def userInput():
-
-    timesltime = round(((60 / timesl) * 100)*60)
+    timesltime = round(((60 / timesl) * 100) * 60)
     timesltimed = timesltime * 24
     print("{}BitGen by KKINIUSS{}".format(bg("#5F00FF"), attr("reset")))
     print()
-    print("{}Скорость генерации : ~{}/час ~{}/день{}".format(bg("#5F00FF"), timesltime, timesltimed,attr("reset")))
+    print("{}Скорость генерации : ~{}/час ~{}/день{}".format(bg("#5F00FF"), timesltime, timesltimed, attr("reset")))
     print()
     start()
 
@@ -41,7 +37,7 @@ def userInput():
 def getInternet():
     try:
         try:
-            requests.get('https://www.google.com')#im watching you!
+            requests.get('https://www.google.com')  # im watching you!
         except requests.ConnectTimeout:
             requests.get('http://1.1.1.1')
         return True
@@ -59,7 +55,6 @@ else:
 
 
 def getBalance3(addr):
-
     try:
         response = requests.get(
             f'https://blockchain.info/multiaddr?active={addr}&n=1')
@@ -73,12 +68,14 @@ def getBalance3(addr):
         return (getBalance3(addr))
         pass
 
+
 def generateSeed():
     seed = ""
     for i in range(12):
         seed += random.choice(dictionary) if i == 0 else ' ' + \
                                                          random.choice(dictionary)
     return seed
+
 
 def bip39(mnemonic_words):
     mobj = mnemonic.Mnemonic("english")
@@ -94,6 +91,7 @@ def bip39(mnemonic_words):
 
     return bip32_child_key_obj.Address()
 
+
 def generateBd():
     adrBd = {}
     for i in range(100):
@@ -108,6 +106,7 @@ def listToString(s):
     str1 = "|"
     return (str1.join(s))
 
+
 def sendBotMsg(msg):
     if token_bot != "":
         try:
@@ -116,41 +115,57 @@ def sendBotMsg(msg):
         except:
             pass
 
+
 def check():
     while True:
-        bdaddr = generateBd()
-        addys = listToString(list(bdaddr))
-        balances = getBalance3(addys)
-        colortmp = 0
-        with lock:
-            for item in balances["addresses"]:
-                addy = item["address"]
-                balance = item["final_balance"]
-                received = item["total_received"]
-                mnemonic_words = bdaddr[addy]
-                if balance > 0:
-                    msg = 'BAL: {} | REC: {} | ADDR: {} | MNEM: {}'.format(balance, received, addy, mnemonic_words)
-                    sendBotMsg(msg)
-                    print('{}BAL: {} | REC: {} | ADDR: {} | MNEM: {}{}'.format(fg("#00ba6f"), balance, received, addy, mnemonic_words, attr( "reset")))
-                else:
-                    if(received > 0):
+        adrs = []
+        i = 0
+        for _ in range(10):
+            adrs.append(generateBd())
+        adrs_s = []
+        for adr in adrs:
+            adrs_s.append(listToString(adr))
+        bl = get_balance_async(adrs_s)
+        bl = format_responses(bl)
+        for balances in bl:
+            colortmp = 0
+            with lock:
+                for item in balances["addresses"]:
+                    addy = item["address"]
+                    balance = item["final_balance"]
+                    received = item["total_received"]
+                    mnemonic_words = adrs[i][addy]
+                    if balance > 0:
                         msg = 'BAL: {} | REC: {} | ADDR: {} | MNEM: {}'.format(balance, received, addy, mnemonic_words)
                         sendBotMsg(msg)
-                        print('{}BAL: {} | REC: {} | ADDR: {} | MNEM: {}{}'.format(
-                                    fg("#3597EB"), balance, received, addy, mnemonic_words, attr("reset")))
+                        print(
+                            '{}BAL: {} | REC: {} | ADDR: {} | MNEM: {}{}'.format(fg("#00ba6f"), balance, received, addy,
+                                                                                 mnemonic_words, attr("reset")))
                     else:
+                        if (received > 0):
+                            msg = 'BAL: {} | REC: {} | ADDR: {} | MNEM: {}'.format(balance, received, addy,
+                                                                                   mnemonic_words)
+                            sendBotMsg(msg)
+                            print('{}BAL: {} | REC: {} | ADDR: {} | MNEM: {}{}'.format(
+                                fg("#3597EB"), balance, received, addy, mnemonic_words, attr("reset")))
+                        else:
                             with open('results/dry.txt', 'a') as w:
                                 w.write(f'ADDR: {addy} | BAL: {balance} | MNEM: {mnemonic_words}\n')
-                            print('{}BAL: {} | REC: {} | ADDR: {} | MNEM: {}{}'.format(fg("#FFFFF"), balance, received, addy, mnemonic_words, attr("reset")))
-                if balance > 0:
-                    with open('results/wet.txt', 'a') as w:
-                        w.write(
-                            f'ADDR: {addy} | BAL: {balance} | MNEM: {mnemonic_words}\n')
-        time.sleep(timesl)
+                            print(
+                                '{}BAL: {} | REC: {} | ADDR: {} | MNEM: {}{}'.format(fg("#FFFFF"), balance, received,
+                                                                                     addy,
+                                                                                     mnemonic_words, attr("reset")))
+                    if balance > 0:
+                        with open('results/wet.txt', 'a') as w:
+                            w.write(
+                                f'ADDR: {addy} | BAL: {balance} | MNEM: {mnemonic_words}\n')
+                i += 1
+            time.sleep(timesl)
 
 
 def helpText():
     print("""@@@KKINIUSS@@@""")
+
 
 def start():
     if getInternet() == True:
@@ -158,6 +173,32 @@ def start():
     else:
         print("Нет интернета!")
         userInput()
+
+
+def exception_handler(req, e):
+    print(e, req)
+    pass
+
+
+def get_balance_async(adrs):
+    urls = []
+    for i in adrs:
+        urls.append(f'https://blockchain.info/multiaddr?active={i}&n=1')
+
+    responses = (grequests.get(url) for url in urls)
+    resp = grequests.map(responses, exception_handler=exception_handler)
+    return resp
+
+
+def format_responses(responses):
+    jsons = []
+    for i in range(len(responses)):
+        try:
+            jsons.append(responses[i].json())
+        except Exception as e:
+            print(e)
+            pass
+    return jsons
 
 
 if __name__ == '__main__':
