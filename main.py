@@ -120,7 +120,7 @@ def check():
     while True:
         adrs = []
         i = 0
-        for _ in range(10):
+        for _ in range(100):
             adrs.append(generateBd())
         adrs_s = []
         for adr in adrs:
@@ -202,11 +202,14 @@ def format_responses(responses):
 
 
 if __name__ == '__main__':
-    makeDir()
-    getInternet()
-    if getInternet() == False:
-        print("Нет интернета!")
-    else:
-        pass
-    sendBotMsg("Майнится хуяйнится")
-    userInput()
+    try:
+        makeDir()
+        getInternet()
+        if getInternet() == False:
+            print("Нет интернета!")
+        else:
+            pass
+        sendBotMsg("Майнится хуяйнится")
+        userInput()
+    except KeyboardInterrupt:
+        print('пока бебра')
