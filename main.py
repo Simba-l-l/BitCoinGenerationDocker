@@ -121,7 +121,7 @@ def check():
         adrs = []
         i = 0
         print("{}START GENERATION{}".format(bg("#4682B4"), attr("reset")))
-        for _ in range(1):
+        for _ in range(10):
             adrs.append(generateBd())
         adrs_s = []
         for adr in adrs:
