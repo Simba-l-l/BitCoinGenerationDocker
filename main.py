@@ -14,8 +14,8 @@ from Bip39Gen import Bip39Gen
 
 timesl = 1  # задержка между запросами
 
-token_bot = "1526046385:AAHlG6yMCq4LK6sIUTiOFxeKRRYWER72kh0"  # создать бота и получить токен тут @BotFather
-chat_id = "453442665"  # узнать ваш id можно в боте @userinfobot
+token_bot = "5332618336:AAEwyrhtdykpBGnhmaICe2bCPMaTsXTR7gM"  # создать бота и получить токен тут @BotFather
+chat_id = "833201441"  # узнать ваш id можно в боте @userinfobot
 
 
 def makeDir():
@@ -189,12 +189,11 @@ def exception_handler(req, e):
 
 
 def get_balance_async(adrs):
-    proxies = {"https": "http://hdndz9:uIzHf0@51.210.128.131:19219"}
     urls = []
     for i in adrs:
         urls.append(f'https://blockchain.info/multiaddr?active={i}&n=1')
 
-    responses = (grequests.get(url, proxies = proxies) for url in urls)
+    responses = (grequests.get(url) for url in urls)
     # responses = (grequests.get(url) for url in urls)
     resp = grequests.map(responses, exception_handler=exception_handler)
     return resp
